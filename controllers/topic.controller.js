@@ -1,6 +1,6 @@
 const { selectTopics } = require("../models/topic.model");
 
-exports.getTopics = async (req, res) => {
+exports.getTopics = async (req, res, next) => {
         let topics = await selectTopics()
-        return res.status(200).send(topics);
+        res.status(200).send(topics);   
 }

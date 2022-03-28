@@ -25,4 +25,23 @@ describe("GET /api/topics", () => {
                 expect(res.body.length).toBe(3); 
             }) 
     })
+    test("objects in array have a slug propery and a description property", () => {
+        return request(app)
+            .get("/api/topics")
+            .expect(200)
+            .then((res) => {
+                const topics = res.body;
+                topics.forEach(topic => {
+                    expect(Object.keys(topic)).toEqual([ 'slug', 'description' ]);
+                }) 
+            }) 
+    })
+    test("returns '404 - path not found' if URL incorrect", () => {
+        return request(app)
+            .get("/api/toepics")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("path not found")
+            }) 
+    })
 })
