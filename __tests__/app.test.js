@@ -36,3 +36,33 @@ describe("GET /api/topics", () => {
             }) 
     })
 })
+
+describe("GET /api/articles/:article_id", () => {
+    test("Responds with an article object, which should match a list of provided properties.", () => {
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then((res) => {
+                const article = res.body.article;
+                const output = {
+                    author: "butter_bridge",
+                    title: "Living in the shadow of a great man",
+                    article_id: 1,
+                    body: "I find this existence challenging",
+                    topic: "mitch",
+                    created_at: "2020-07-09T20:11:00.000Z",
+                    votes: 100
+                }
+                expect(article).toBeInstanceOf(Object);
+                expect(article).toEqual(output);
+            })
+    })
+    test("returns '404 - path not found' if id doesn't exist", () => {
+        return request(app)
+            .get("/api/articles/1000")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article not found")
+            }) 
+    })
+})
