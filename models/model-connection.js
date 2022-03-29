@@ -1,4 +1,4 @@
-const { selectTopics } = require("./topic.model")
-const { selectArticle } = require("./article.model")
+const { fetchTopics } = require("./topic.model")
+const { fetchArticle } = require("./article.model")
 
-module.exports = { selectTopics, selectArticle }
+module.exports = { fetchTopics, fetchArticle }
