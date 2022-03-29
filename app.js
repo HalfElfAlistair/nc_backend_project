@@ -1,12 +1,14 @@
 const express = require("express");
 const app = express();
-const { getTopics, getArticle } = require("./controllers/controller-connection")
+const { getTopics, getArticle, patchArticle } = require("./controllers/controller-connection")
 
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticle)
+
+app.patch("/api/articles/:article_id", patchArticle)
 
 app.use((req, res, next) => {
     res.status(404).send({ msg: 'path not found' })

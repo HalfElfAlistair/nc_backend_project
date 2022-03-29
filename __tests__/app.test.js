@@ -65,3 +65,17 @@ describe("GET /api/articles/:article_id", () => {
             }) 
     })
 })
+
+describe.only("PATCH /api/articles/:article_id", () => {
+    test("responds with the updated article", () => {
+        const articleUpdate = { inc_votes: 5 };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(articleUpdate)
+            .expect(200)
+            .then((res) => {
+                const article = res.body.article;
+                expect(article.votes).toBe(105);
+            })
+    })
+})
