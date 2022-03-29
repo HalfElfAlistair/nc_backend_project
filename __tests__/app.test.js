@@ -9,32 +9,23 @@ beforeEach(() => seed(testData));
 // afterAll(() => db.end());
 
 describe("GET /api/topics", () => {
-    test("responds with array", () => {
+    test("Responds with an array of topic objects, with slug and description properties", () => {
         return request(app)
             .get("/api/topics")
             .expect(200)
             .then((res) => {
-                expect(res.body).toBeInstanceOf(Array); 
-            }) 
-    })
-    test("responds with array of 3 topic objects", () => {
-        return request(app)
-            .get("/api/topics")
-            .expect(200)
-            .then((res) => {
-                expect(res.body.length).toBe(3); 
-            }) 
-    })
-    test("objects in array have a slug propery and a description property", () => {
-        return request(app)
-            .get("/api/topics")
-            .expect(200)
-            .then((res) => {
-                const topics = res.body;
+                const topics = res.body.topics;
+                expect(topics).toBeInstanceOf(Array);
+                expect(topics.length).toBe(3);
                 topics.forEach(topic => {
-                    expect(Object.keys(topic)).toEqual([ 'slug', 'description' ]);
+                    expect(topic).toEqual(
+                        expect.objectContaining({
+                            slug: expect.any(String),
+                            description: expect.any(String)
+                        })
+                    )
                 }) 
-            }) 
+            })
     })
     test("returns '404 - path not found' if URL incorrect", () => {
         return request(app)
