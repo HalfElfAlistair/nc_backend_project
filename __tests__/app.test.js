@@ -64,9 +64,17 @@ describe("GET /api/articles/:article_id", () => {
                 expect(body.msg).toBe("article not found")
             }) 
     })
+    test("returns '400 - invalid ID' if id type is wrong", () => {
+        return request(app)
+            .get("/api/articles/one")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request")
+            }) 
+    })
 })
 
-describe.only("PATCH /api/articles/:article_id", () => {
+describe("PATCH /api/articles/:article_id", () => {
     test("responds with the updated article", () => {
         const articleUpdate = { inc_votes: 5 };
         return request(app)
