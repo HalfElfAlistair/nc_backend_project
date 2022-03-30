@@ -15,9 +15,10 @@ app.use((req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    console.log("===========>", err.code)
-    if (err.code === "22P02") {
-        res.status(400).send({ msg: 'Bad Request' });
+    // console.log("===========>", err.code)
+    const badReqCodes = [ "22P02", "23502" ]
+    if (badReqCodes.includes(err.code)) {
+        res.status(400).send({ msg: 'bad request' });
     } else {
         next(err);
     }

@@ -64,12 +64,12 @@ describe("GET /api/articles/:article_id", () => {
                 expect(body.msg).toBe("article not found")
             }) 
     })
-    test("returns '400 - invalid ID' if id type is wrong", () => {
+    test("returns '400 - bad request' if id type is wrong", () => {
         return request(app)
             .get("/api/articles/one")
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("Bad Request")
+                expect(body.msg).toBe("bad request")
             }) 
     })
 })
@@ -83,7 +83,54 @@ describe("PATCH /api/articles/:article_id", () => {
             .expect(200)
             .then((res) => {
                 const article = res.body.article;
+                expect(article.article_id).toBe(1);
                 expect(article.votes).toBe(105);
             })
+    })
+    test("returns '404 - path not found' if id doesn't exist", () => {
+        return request(app)
+            .get("/api/articles/1000")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article not found")
+            }) 
+    })
+    test("returns '400 - bad request' if id type is wrong", () => {
+        return request(app)
+            .get("/api/articles/one")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request")
+            }) 
+    })
+    test("returns '400 - Bad Request' if no content provided", () => {
+        const articleUpdate = {};
+        return request(app)
+            .patch("/api/articles/1")
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request")
+            }) 
+    })
+    test("returns '400 - Bad Request' if keys are entered incorrectly", () => {
+        const articleUpdate = { inc_voted: 5 };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request")
+            }) 
+    })
+    test("returns '400 - Bad Request' if data type entered is incorrect", () => {
+        const articleUpdate = { inc_votes: "five" };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request")
+            }) 
     })
 })
