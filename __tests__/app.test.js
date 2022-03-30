@@ -134,3 +134,31 @@ describe("PATCH /api/articles/:article_id", () => {
             }) 
     })
 })
+
+describe("GET /api/users", () => {
+    test("Responds with an array of objects, each object should have a username property.", () => {
+        return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then((res) => {
+                const users = res.body.users;
+                expect(users).toBeInstanceOf(Array);
+                expect(users.length).toBe(4);
+                users.forEach(user => {
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            username: expect.any(String)
+                        })
+                    )
+                }) 
+            })
+    })
+    test("returns '404 - path not found' if URL incorrect", () => {
+        return request(app)
+            .get("/api/shrel")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("path not found")
+            }) 
+    })
+})
