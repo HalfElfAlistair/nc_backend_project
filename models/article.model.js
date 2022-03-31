@@ -11,8 +11,6 @@ exports.fetchArticle = async (id) => {
     
     const articlesData = await db.query(queryStr, [id])
 
-    console.log(articlesData.rows)
-
     if (articlesData.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article not found"})
     }
@@ -44,4 +42,29 @@ exports.fetchArticles = async () => {
     const articlesData = await db.query(queryStr)
 
     return articlesData.rows;
+}
+
+exports.fetchComments = async (id) => {
+    const queryStr = `SELECT 
+    comment_id,
+    votes,
+    created_at,
+    author,
+    body
+    FROM comments
+    WHERE article_id = $1;`
+
+    const commentsData = await db.query(queryStr, [id])
+
+    const idQuery = `SELECT 
+        article_id 
+        FROM articles 
+        WHERE article_id = $1`
+    const idCheck = await db.query(idQuery, [id])
+
+    if ((commentsData.rows.length === 0) && (idCheck.rows.length === 0)) {
+        return Promise.reject({ status: 404, msg: "article not found"})
+    }
+
+    return commentsData.rows;
 }
