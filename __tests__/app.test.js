@@ -164,7 +164,7 @@ describe("GET /api/users", () => {
 })
 
 describe("GET /api/articles/:article_id (comment count)", () => {
-    test("Responds with the article object, now including the total count of comments with this article_id", () => {
+    test.only("Responds with the article object, now including the total count of comments with this article_id", () => {
         return request(app)
             .get("/api/articles/1")
             .expect(200)
@@ -181,6 +181,7 @@ describe("GET /api/articles/:article_id (comment count)", () => {
                     comment_count: "11"
                 }
                 expect(article).toEqual(output);
+                expect(article.comment_count).toMatch(/^[0-9]+$/);
             })
     })
     test("Responds with the article object, and comment count of 0 when there are none matching the article_id", () => {
@@ -200,6 +201,7 @@ describe("GET /api/articles/:article_id (comment count)", () => {
                     comment_count: "0"
                 }
                 expect(article).toEqual(output);
+                expect(article.comment_count).toMatch(/^[0-9]+$/);
             })
     })
     test("returns '404 - path not found' if id doesn't exist", () => {
