@@ -308,7 +308,7 @@ describe("GET /api/articles/:article_id/comments", () => {
     })
     test("returns '404 - article not found' if id doesn't exist", () => {
         return request(app)
-            .get("/api/articles/1000")
+            .get("/api/articles/1000/comments")
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe("article not found")
@@ -316,7 +316,7 @@ describe("GET /api/articles/:article_id/comments", () => {
     })
     test("returns '400 - bad request' if id type is wrong", () => {
         return request(app)
-            .get("/api/articles/one")
+            .get("/api/articles/one/comments")
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("bad request")

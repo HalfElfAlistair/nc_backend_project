@@ -52,9 +52,19 @@ exports.fetchComments = async (id) => {
     author,
     body
     FROM comments
-    WHERE article_id = $1`
+    WHERE article_id = $1;`
 
     const commentsData = await db.query(queryStr, [id])
+
+    const idQuery = `SELECT 
+        article_id 
+        FROM articles 
+        WHERE article_id = $1`
+    const idCheck = await db.query(idQuery, [id])
+
+    if ((commentsData.rows.length === 0) && (idCheck.rows.length === 0)) {
+        return Promise.reject({ status: 404, msg: "article not found"})
+    }
 
     return commentsData.rows;
 }

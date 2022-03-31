@@ -29,6 +29,12 @@ exports.getArticles = async (req, res, next) => {
 
 exports.getComments = async (req, res, next) => {
     const { article_id } = req.params;
-    const comments = await fetchComments(article_id);
-    res.status(200).send({ comments }); 
+    try {
+        const comments = await fetchComments(article_id);
+        res.status(200).send({ comments }); 
+    } catch (err) {
+        // console.log(err)
+        next(err);
+    }
+    
 }
