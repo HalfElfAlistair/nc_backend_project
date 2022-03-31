@@ -164,7 +164,7 @@ describe("GET /api/users", () => {
 })
 
 describe("GET /api/articles/:article_id (comment count)", () => {
-    test.only("Responds with the article object, now including the total count of comments with this article_id", () => {
+    test("Responds with the article object, now including the total count of comments with this article_id", () => {
         return request(app)
             .get("/api/articles/1")
             .expect(200)
@@ -178,10 +178,9 @@ describe("GET /api/articles/:article_id (comment count)", () => {
                     topic: "mitch",
                     created_at: "2020-07-09T20:11:00.000Z",
                     votes: 100,
-                    comment_count: "11"
+                    comment_count: 11
                 }
                 expect(article).toEqual(output);
-                expect(article.comment_count).toMatch(/^[0-9]+$/);
             })
     })
     test("Responds with the article object, and comment count of 0 when there are none matching the article_id", () => {
@@ -198,10 +197,9 @@ describe("GET /api/articles/:article_id (comment count)", () => {
                     topic: "mitch",
                     created_at: "2020-05-06T01:14:00.000Z",
                     votes: 0,
-                    comment_count: "0"
+                    comment_count: 0
                 }
                 expect(article).toEqual(output);
-                expect(article.comment_count).toMatch(/^[0-9]+$/);
             })
     })
     test("returns '404 - path not found' if id doesn't exist", () => {
@@ -222,3 +220,28 @@ describe("GET /api/articles/:article_id (comment count)", () => {
     })
 })
 
+describe("GET /api/articles", () => {
+    test("an articles array of article objects, each of which should match a list of provided properties.", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then((res) => {
+                const articles = res.body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length).toBe(12);
+                articles.forEach(article => {
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number),
+                        })
+                    )
+                }) 
+            })
+    })
+})

@@ -1,4 +1,4 @@
-const { fetchArticle, updateArticle } = require("../models/model-connection");
+const { fetchArticle, updateArticle, fetchArticles } = require("../models/model-connection");
 
 exports.getArticle = async (req, res, next) => {
     const { article_id } = req.params;
@@ -20,4 +20,9 @@ exports.patchArticle = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+}
+
+exports.getArticles = async (req, res, next) => {
+    const articles = await fetchArticles()
+    res.status(200).send({ articles }); 
 }
