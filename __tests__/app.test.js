@@ -178,7 +178,7 @@ describe("GET /api/articles/:article_id (comment count)", () => {
                     topic: "mitch",
                     created_at: "2020-07-09T20:11:00.000Z",
                     votes: 100,
-                    comment_count: 11
+                    comment_count: "11"
                 }
                 expect(article).toEqual(output);
             })
@@ -197,7 +197,7 @@ describe("GET /api/articles/:article_id (comment count)", () => {
                     topic: "mitch",
                     created_at: "2020-05-06T01:14:00.000Z",
                     votes: 0,
-                    comment_count: 0
+                    comment_count: "0"
                 }
                 expect(article).toEqual(output);
             })
@@ -219,3 +219,4 @@ describe("GET /api/articles/:article_id (comment count)", () => {
             }) 
     })
 })
+
