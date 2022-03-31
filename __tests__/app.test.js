@@ -56,7 +56,7 @@ describe("GET /api/articles/:article_id", () => {
                 expect(article).toEqual(output);
             })
     })
-    test("returns '404 - path not found' if id doesn't exist", () => {
+    test("returns '404 - article not found' if id doesn't exist", () => {
         return request(app)
             .get("/api/articles/1000")
             .expect(404)
@@ -87,7 +87,7 @@ describe("PATCH /api/articles/:article_id", () => {
                 expect(article.votes).toBe(105);
             })
     })
-    test("returns '404 - path not found' if id doesn't exist", () => {
+    test("returns '404 - article not found' if id doesn't exist", () => {
         return request(app)
             .get("/api/articles/1000")
             .expect(404)
@@ -202,7 +202,7 @@ describe("GET /api/articles/:article_id (comment count)", () => {
                 expect(article).toEqual(output);
             })
     })
-    test("returns '404 - path not found' if id doesn't exist", () => {
+    test("returns '404 - article not found' if id doesn't exist", () => {
         return request(app)
             .get("/api/articles/1000")
             .expect(404)
@@ -258,10 +258,68 @@ describe("GET /api/articles", () => {
     })
     test("returns '404 - path not found' if URL incorrect", () => {
         return request(app)
-            .get("/api/toepics")
+            .get("/api/shrel")
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe("path not found")
+            }) 
+    })
+})
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("Responds with an array of comments for the given article_id of which each comment should have have a list of specified properties.", () => {
+        return request(app)
+            .get("/api/articles/9/comments")
+            .expect(200)
+            .then((res) => {
+                const comments = res.body.comments;
+                expect(comments).toBeInstanceOf(Array);
+                expect(comments.length).toBe(2);
+                comments.forEach(comment => {
+                    expect(comment).toEqual(
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                        })
+                    )
+                }) 
+            })
+    })
+    test("Responds with an empty array if there are no comments for the article id", () => {
+        return request(app)
+            .get("/api/articles/4/comments")
+            .expect(200)
+            .then((res) => {
+                const comments = res.body.comments;
+                expect(comments).toBeInstanceOf(Array);
+                expect(comments.length).toBe(0);
+            })
+    })
+    test("returns '404 - path not found' if URL incorrect", () => {
+        return request(app)
+            .get("/api/articles/:article_id/shrel")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("path not found")
+            }) 
+    })
+    test("returns '404 - article not found' if id doesn't exist", () => {
+        return request(app)
+            .get("/api/articles/1000")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article not found")
+            }) 
+    })
+    test("returns '400 - bad request' if id type is wrong", () => {
+        return request(app)
+            .get("/api/articles/one")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request")
             }) 
     })
 })
