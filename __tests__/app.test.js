@@ -38,7 +38,7 @@ describe("GET /api/topics", () => {
 })
 
 describe("GET /api/articles/:article_id", () => {
-    xtest("Responds with an article object, which should match a list of provided properties.", () => {
+    test("Responds with an article object, which should match a list of provided properties.", () => {
         return request(app)
             .get("/api/articles/1")
             .expect(200)
@@ -159,63 +159,6 @@ describe("GET /api/users", () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe("path not found")
-            }) 
-    })
-})
-
-describe("GET /api/articles/:article_id (comment count)", () => {
-    test("Responds with the article object, now including the total count of comments with this article_id", () => {
-        return request(app)
-            .get("/api/articles/1")
-            .expect(200)
-            .then((res) => {
-                const article = res.body.article;
-                const output = {
-                    author: "butter_bridge",
-                    title: "Living in the shadow of a great man",
-                    article_id: 1,
-                    body: "I find this existence challenging",
-                    topic: "mitch",
-                    created_at: "2020-07-09T20:11:00.000Z",
-                    votes: 100,
-                    comment_count: 11
-                }
-                expect(article).toEqual(output);
-            })
-    })
-    test("Responds with the article object, and comment count of 0 when there are none matching the article_id", () => {
-        return request(app)
-            .get("/api/articles/4")
-            .expect(200)
-            .then((res) => {
-                const article = res.body.article;
-                const output = {
-                    author: "rogersop",
-                    title: "Student SUES Mitch!",
-                    article_id: 4,
-                    body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
-                    topic: "mitch",
-                    created_at: "2020-05-06T01:14:00.000Z",
-                    votes: 0,
-                    comment_count: 0
-                }
-                expect(article).toEqual(output);
-            })
-    })
-    test("returns '404 - path not found' if id doesn't exist", () => {
-        return request(app)
-            .get("/api/articles/1000")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("article not found")
-            }) 
-    })
-    test("returns '400 - bad request' if id type is wrong", () => {
-        return request(app)
-            .get("/api/articles/one")
-            .expect(400)
-            .then(({ body }) => {
-                expect(body.msg).toBe("bad request")
             }) 
     })
 })
