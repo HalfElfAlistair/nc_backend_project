@@ -326,15 +326,15 @@ describe("GET /api/articles/:article_id/comments", () => {
 
 describe("POST /api/articles/:article_id/comments", () => {
     test("Takes an object with username and body properties, adds a new comment to db and responds with the posted comment.", () => {
-        const newComment = { username: "icellusedkars", body: "One day my log will have something to say about this. My log saw something that night" };
+        const newComment = { username: "icellusedkars", body: "test" };
         return request(app)
             .post("/api/articles/4/comments")
             .send(newComment)
             .expect(200)
             .then((res) => {
-                const comment = res.body.comment;
+                const {comment} = res.body;
                 expect(comment.author).toBe("icellusedkars");
-                expect(comment.body).toBe("One day my log will have something to say about this. My log saw something that night");
+                expect(comment.body).toBe("test");
             })
     })
     test("returns '404 - path not found' if URL incorrect", () => {
@@ -362,7 +362,7 @@ describe("POST /api/articles/:article_id/comments", () => {
             }) 
     })
     test("returns '400 - Bad Request' if no username provided", () => {
-        const newComment = { username: "", body: "One day my log will have something to say about this. My log saw something that night" };
+        const newComment = { username: "", body: "test" };
         return request(app)
             .post("/api/articles/4/comments")
             .send(newComment)
@@ -372,7 +372,7 @@ describe("POST /api/articles/:article_id/comments", () => {
             }) 
     })
     test("returns '400 - Bad Request' if keys aren't right", () => {
-        const newComment = { usernam: "icellusedkars", body: "One day my log will have something to say about this. My log saw something that night" };
+        const newComment = { usernam: "icellusedkars", body: "test" };
         return request(app)
             .post("/api/articles/4/comments")
             .send(newComment)
@@ -382,7 +382,17 @@ describe("POST /api/articles/:article_id/comments", () => {
             }) 
     })
     test("returns '400 - Bad Request' if username value is wrong type", () => {
-        const newComment = { username: 5, body: "One day my log will have something to say about this. My log saw something that night" };
+        const newComment = { username: 5, body: "test" };
+        return request(app)
+            .post("/api/articles/4/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request")
+            }) 
+    })
+    test("returns '400 - Bad Request' if comment body value is empty string", () => {
+        const newComment = { username: "icellusedkars", body: "" };
         return request(app)
             .post("/api/articles/4/comments")
             .send(newComment)
