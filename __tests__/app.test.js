@@ -402,3 +402,85 @@ describe("POST /api/articles/:article_id/comments", () => {
             }) 
     })
 })
+
+describe("GET /api/articles (queries)", () => {
+    test("Takes one query that filters articles array by topic.", () => {
+        return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then((res) => {
+                const {articles} = res.body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length).toBe(11);
+                articles.forEach(article => {
+                    expect(article.topic).toEqual("mitch")
+                }) 
+            })
+    })
+    test("Takes one query that sorts articles array by a valid column, in descending order by default", () => {
+        return request(app)
+            .get("/api/articles?sort_by=created_at")
+            .expect(200)
+            .then((res) => {
+                const {articles} = res.body;
+                expect(articles.length).toBe(12);
+                expect(articles[0].article_id).toBe(3)
+                expect(articles[0].created_at).toBe("2020-11-03T09:12:00.000Z")
+                expect(articles[11].article_id).toBe(7)
+                expect(articles[11].created_at).toBe("2020-01-07T14:08:00.000Z")
+            })
+    })
+    test("Takes query that sorts articles array by a valid column in ascending order", () => {
+        return request(app)
+            .get("/api/articles?sort_by=created_at&order=asc")
+            .expect(200)
+            .then((res) => {
+                const {articles} = res.body;
+                expect(articles.length).toBe(12);
+                expect(articles[0].article_id).toBe(7)
+                expect(articles[0].created_at).toBe("2020-01-07T14:08:00.000Z")
+                expect(articles[11].article_id).toBe(3)
+                expect(articles[11].created_at).toBe("2020-11-03T09:12:00.000Z")
+            })
+    })
+    test("Takes query that sorts articles array by a valid column in ascending order and only shows those of a queried topic", () => {
+        return request(app)
+            .get("/api/articles?topic=mitch&sort_by=created_at&order=asc")
+            .expect(200)
+            .then((res) => {
+                const {articles} = res.body;
+                expect(articles.length).toBe(11);
+                articles.forEach(article => {
+                    expect(article.topic).toEqual("mitch")
+                }) 
+                expect(articles[0].article_id).toBe(7)
+                expect(articles[0].created_at).toBe("2020-01-07T14:08:00.000Z")
+                expect(articles[10].article_id).toBe(3)
+                expect(articles[10].created_at).toBe("2020-11-03T09:12:00.000Z")
+            })
+    })
+    test("returns 400 Invalid sort query if sort_by value isn't a valid column", () => {
+        return request(app)
+            .get("/api/articles?sort_by=shrel")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid sort query")
+            }) 
+    })
+    test("returns 400 invalid sort query if sort_by value isn't a valid column", () => {
+        return request(app)
+            .get("/api/articles?order=shrel")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid order query")
+            }) 
+    })
+    test("returns '404 - path not found' if URL incorrect", () => {
+        return request(app)
+            .get("/api/shrel")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("path not found")
+            }) 
+    })
+})

@@ -30,16 +30,31 @@ exports.updateArticle = async (id, voteChange) => {
     return result.rows[0];
 }
 
-exports.fetchArticles = async () => {
-    // query joins articles and comments tables on article_id, counts the number of comments matching an article_id and groups the data by this.
-    const queryStr = `SELECT articles.*,
+exports.fetchArticles = async (topic, sort_by = "created_at", order = "desc") => {
+    let queryStr = `SELECT articles.*,
     CAST(COUNT(comments.comment_id) AS int) AS comment_count
     FROM articles
     LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`
+    GROUP BY articles.article_id`
 
-    const articlesData = await db.query(queryStr)
+    let queryArray = [];
+
+    if (!["article_id", "created_at", "votes"].includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: 'invalid sort query' });
+    }
+
+    if (!["asc", "desc"].includes(order)) {
+        return Promise.reject({ status: 400, msg: 'invalid order query' });
+    }
+
+    if (topic !== undefined) {
+        queryStr += ` HAVING topic = $1`;
+        queryArray.push(topic);
+    }
+
+    queryStr += ` ORDER BY ${sort_by} ${order};`;
+
+    const articlesData = await db.query(queryStr, queryArray)
 
     return articlesData.rows;
 }
