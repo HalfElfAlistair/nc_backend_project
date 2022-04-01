@@ -1,4 +1,4 @@
-const { fetchArticle, updateArticle, fetchArticles, fetchComments } = require("../models/model-connection");
+const { fetchArticle, updateArticle, fetchArticles, fetchComments, addComment } = require("../models/model-connection");
 
 exports.getArticle = async (req, res, next) => {
     const { article_id } = req.params;
@@ -33,8 +33,17 @@ exports.getComments = async (req, res, next) => {
         const comments = await fetchComments(article_id);
         res.status(200).send({ comments }); 
     } catch (err) {
-        // console.log(err)
         next(err);
     }
-    
+}
+
+exports.postComment = async (req, res, next) => {
+    const { article_id } = req.params;
+    const newComment = req.body;
+    try {
+        const comment = await addComment(article_id, newComment);
+        res.status(200).send({ comment }); 
+    } catch (err) {
+        next(err);
+    }
 }
