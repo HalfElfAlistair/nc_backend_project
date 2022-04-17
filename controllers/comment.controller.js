@@ -1,6 +1,7 @@
 const { removeComment } = require("../models/model-connection");
 
 exports.deleteComment = async (req, res, next) => {
+    
     const { comment_id } = req.params;
 
     try {

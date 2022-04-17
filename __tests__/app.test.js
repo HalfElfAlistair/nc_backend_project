@@ -7,11 +7,10 @@ const connection = require("../db/connection");
 
 
 beforeEach(() => seed(testData));
-// afterAll(() => db.end());
 afterAll(() => connection.end());
 
 describe("GET /api/topics", () => {
-    test("Responds with an array of topic objects, with slug and description properties", () => {
+    test.only("Responds with an array of topic objects, with slug and description properties", () => {
         return request(app)
             .get("/api/topics")
             .expect(200)
@@ -347,7 +346,7 @@ describe("POST /api/articles/:article_id/comments", () => {
                 expect(body.msg).toBe("path not found")
             }) 
     })
-    test("returns '404 - article not found' if id doesn't exist", () => {
+    test.only("returns '404 - article not found' if id doesn't exist", () => {
         return request(app)
             .get("/api/articles/1000/comments")
             .expect(404)
@@ -492,5 +491,29 @@ describe("DELETE /api/comments/:comment_id", () => {
         return request(app)
             .delete('/api/comments/1')
             .expect(204);
+    })
+    test("returns '404 - path not found' if URL incorrect", () => {
+        return request(app)
+            .delete("/api/shrel/1")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("path not found")
+            }) 
+    })
+    test("returns '404 - comment not found' if id doesn't exist", () => {
+        return request(app)
+            .delete("/api/comments/1000")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("comment not found")
+            }) 
+    })
+    test("returns '400 - bad request' if id type is wrong", () => {
+        return request(app)
+            .delete("/api/comments/one")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request")
+            }) 
     })
 })

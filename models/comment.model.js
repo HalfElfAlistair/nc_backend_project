@@ -8,6 +8,10 @@ exports.removeComment = async (id) => {
     RETURNING *;`
     const result = await db.query(queryStr, [id])
 
+    if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "comment not found"})
+    }
+
     return result.rows;
 
 }
