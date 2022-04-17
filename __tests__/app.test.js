@@ -2,11 +2,13 @@ const db = require("../db/data/test-data/index");
 const app = require("../app");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
-const testData = require("../db/data/test-data")
+const testData = require("../db/data/test-data");
+const connection = require("../db/connection");
 
 
 beforeEach(() => seed(testData));
 // afterAll(() => db.end());
+afterAll(() => connection.end());
 
 describe("GET /api/topics", () => {
     test("Responds with an array of topic objects, with slug and description properties", () => {
@@ -330,7 +332,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         return request(app)
             .post("/api/articles/4/comments")
             .send(newComment)
-            .expect(200)
+            .expect(201)
             .then((res) => {
                 const {comment} = res.body;
                 expect(comment.author).toBe("icellusedkars");
@@ -482,5 +484,13 @@ describe("GET /api/articles (queries)", () => {
             .then(({ body }) => {
                 expect(body.msg).toBe("path not found")
             }) 
+    })
+})
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("deletes the given comment by comment_id and responds with status 204 and no content", () => {
+        return request(app)
+            .delete('/api/comments/1')
+            .expect(204);
     })
 })
