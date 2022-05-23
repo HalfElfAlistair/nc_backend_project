@@ -39,7 +39,7 @@ exports.fetchArticles = async (topic, sort_by = "created_at", order = "desc") =>
 
     let queryArray = [];
 
-    if (!["article_id", "created_at", "votes"].includes(sort_by)) {
+    if (!["article_id", "created_at", "votes", "comment_count"].includes(sort_by)) {
         return Promise.reject({ status: 400, msg: 'invalid sort query' });
     }
 
