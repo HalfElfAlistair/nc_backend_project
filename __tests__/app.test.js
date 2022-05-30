@@ -10,7 +10,7 @@ beforeEach(() => seed(testData));
 afterAll(() => connection.end());
 
 describe("GET /api/topics", () => {
-    test.only("Responds with an array of topic objects, with slug and description properties", () => {
+    test("Responds with an array of topic objects, with slug and description properties", () => {
         return request(app)
             .get("/api/topics")
             .expect(200)
@@ -346,7 +346,7 @@ describe("POST /api/articles/:article_id/comments", () => {
                 expect(body.msg).toBe("path not found")
             }) 
     })
-    test.only("returns '404 - article not found' if id doesn't exist", () => {
+    test("returns '404 - article not found' if id doesn't exist", () => {
         return request(app)
             .get("/api/articles/1000/comments")
             .expect(404)

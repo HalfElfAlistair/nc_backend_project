@@ -28,7 +28,6 @@ app.use((req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    // console.log("===========>", err.code)
     const badReqCodes = [ "22P02", "23502", "23503" ]
     if (badReqCodes.includes(err.code)) {
         res.status(400).send({ msg: 'bad request' });
